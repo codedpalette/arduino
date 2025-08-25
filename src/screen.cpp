@@ -22,12 +22,16 @@ void setup() {
   Waveshield.begin();
   Waveshield.setRotation(1);
 
+  TSConfigData data = {85, 925, 67, 964};
+  Waveshield.setTsConfigData(data);
+
   pinMode(BUTTON_PIN, INPUT);
 }
 
 uint16_t getColor(uint8_t red, uint8_t green, uint8_t blue);
 void debugColor(uint8_t red, uint8_t green, uint8_t blue);
 void debugTsConfigData(TSConfigData data);
+void debugPoint(TSPoint p);
 
 void loop() {
   uint8_t red =
@@ -39,17 +43,27 @@ void loop() {
   uint16_t color = getColor(red, green, blue);
   // debugColor(red, green, blue);
 
-  TSConfigData data = Waveshield.getTsConfigData();
-  debugTsConfigData(data);
+  // TSConfigData data = Waveshield.getTsConfigData();
+  //  debugTsConfigData(data);
 
   int buttonState = digitalRead(BUTTON_PIN);
   if (buttonState == HIGH) {
     Waveshield.fillScreen(0x0000);
   } else {
     TSPoint p = Waveshield.getPoint();
+    debugPoint(p);
     Waveshield.normalizeTsPoint(p);
-    Waveshield.fillCircle(p.x, p.y, 3, color);
+    Waveshield.fillCircle(p.x, p.y, 5, color);
   }
+}
+
+void debugPoint(TSPoint p) {
+  Serial.print("X: ");
+  Serial.print(p.x);
+  Serial.print(", Y: ");
+  Serial.print(p.y);
+  Serial.print(", Z: ");
+  Serial.println(p.z);
 }
 
 void debugTsConfigData(TSConfigData data) {
